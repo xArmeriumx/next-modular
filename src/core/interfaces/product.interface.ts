@@ -22,10 +22,6 @@ export const ProductUtils = {
     return product.stock <= 0;
   },
 
-  /**
-   * 2. เพิ่มฟังก์ชันตัดสินใจเรื่อง Variant (สี)
-   * แยก Logic ออกจาก UI อย่างชัดเจน
-   */
   getVariant: (product: Product): ProductVariant => {
     if (product.stock <= 0) return "danger";
     if (product.stock < 5) return "warning";

@@ -1,13 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { ProductUtils } from "@/core/interfaces/product.interface";
 import { Card } from "@/components/ui/Card";
+import { checkoutAction } from "@/app/actions/order.actions";
 
 export default function CartPage() {
+  const router = useRouter();
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCart();
+  const [isPending, startTransition] = useTransition();
+
+  const handleCheckout = () => {
+    // 1. แปลงข้อมูลตะกร้าหน้าเว็บ ให้เป็น Payload แบบเกราะป้องกัน (ไม่ส่งราคาไปเลย)
+    const payload = items.map(item => ({
+      productId: item.product.id,
+      quantity: item.quantity
+    }));
+
+    // 2. เรียกใช้ Server Action 
+    startTransition(async () => {
+      const response = await checkoutAction(null, payload);
+      
+      if (response?.success && response.data) {
+        alert(`🎉 สั่งซื้อสำเร็จเรียบร้อย!\nหมายเลขออเดอร์: ${response.data.orderId}\nขอบคุณที่ใช้บริการครับ`);
+        clearCart();
+        router.push("/");
+      } else {
+        alert(`❌ พบข้อผิดพลาด:\n${response?.error}`);
+      }
+    });
+  };
 
   if (items.length === 0) {
     return (
@@ -89,10 +114,13 @@ export default function CartPage() {
             </p>
           </div>
           <button 
-            className="btn-primary px-12 py-5 text-2xl shadow-xl shadow-primary/20 w-full md:w-auto"
-            onClick={() => alert("ระบบชำระเงินยังไม่เปิดให้บริการครับ 🚀")}
+            disabled={isPending}
+            className={`btn-primary px-12 py-5 text-2xl shadow-xl shadow-primary/20 w-full md:w-auto transition-all ${
+              isPending ? "opacity-50 cursor-not-allowed scale-95" : "hover:scale-[1.02]"
+            }`}
+            onClick={handleCheckout}
           >
-            ORDER NOW
+            {isPending ? "PROCESSING..." : "ORDER NOW"}
           </button>
         </div>
       </div>

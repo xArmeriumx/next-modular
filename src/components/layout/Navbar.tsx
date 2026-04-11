@@ -4,10 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
-/**
- * Navbar - UI Module
- * แสดง Logo และจำนวนสินค้าในตะกร้าแบบ Real-time
- */
+
 export const Navbar = () => {
   const { totalItems } = useCart();
 
@@ -22,13 +19,17 @@ export const Navbar = () => {
           <Link href="/add-product" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">
             + เพิ่มสินค้า
           </Link>
-          
+
+          <Link href="/orders" className="text-sm font-bold text-slate-400 hover:text-white transition-colors border-l border-white/10 pl-6">
+            ประวัติการสั่งซื้อ
+          </Link>
+
           <Link href="/cart" className="relative cursor-pointer group">
             <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 group-hover:border-primary transition-all">
               <span className="text-xl">🛒</span>
               <span className="font-bold text-primary">{totalItems}</span>
             </div>
-            
+
             {/* Tooltip เล็กๆ */}
             <div className="absolute top-full right-0 mt-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               <div className="bg-slate-800 text-xs py-2 px-4 rounded-lg border border-white/10 whitespace-nowrap">

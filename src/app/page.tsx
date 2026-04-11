@@ -12,10 +12,8 @@ interface HomeProps {
 export default async function Home({ searchParams }: HomeProps) {
   const { q } = await searchParams;
 
-  // แกะกล่อง ServiceResponse
   const response = await productService.getAllProducts({ query: q });
 
-  // เช็คก่อนใช้ (Type Guarding แบบง่าย)
   const products = response.success && response.data ? response.data : [];
   const errorMessage = response.success ? null : response.error;
 

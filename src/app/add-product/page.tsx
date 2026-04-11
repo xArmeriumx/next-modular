@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { addProductAction } from "../actions/product.actions";
 import { Card } from "@/components/ui/Card";
-import { useActionState, useEffect } from "react"; 
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AddProductPage() {
   const router = useRouter();
   const [state, action, isPending] = useActionState(addProductAction, null);
 
-  // ดักฟังว่า Action ส่งสถานะ success = true กลับมาเมื่อไหร่ ให้ย้ายหน้าเองทางฝั่ง Client
   useEffect(() => {
     if (state?.success) {
       router.push("/");
@@ -29,7 +28,7 @@ export default function AddProductPage() {
         </h1>
 
         <Card>
-          {/* แสดงข้อความแจ้งเตือน Error ถ้ามี (Zod เป็นคนส่งมา) */}
+
           {state?.error && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 font-bold flex items-center gap-3 animate-pulse">
               <span>🚨</span> {state.error}
@@ -96,9 +95,8 @@ export default function AddProductPage() {
             <button
               type="submit"
               disabled={isPending} // <--- ป้องกันการกดซ้ำระหว่างรอ
-              className={`w-full btn-primary text-xl py-4 shadow-xl shadow-primary/20 transition-all ${
-                isPending ? "opacity-50 cursor-not-allowed scale-95" : "hover:scale-[1.02]"
-              }`}
+              className={`w-full btn-primary text-xl py-4 shadow-xl shadow-primary/20 transition-all ${isPending ? "opacity-50 cursor-not-allowed scale-95" : "hover:scale-[1.02]"
+                }`}
             >
               {isPending ? "กำลังบันทึกหน้า..." : "บันทึกสินค้า"}
             </button>
