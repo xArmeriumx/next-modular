@@ -12,9 +12,12 @@ interface PageProps {
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const product = await productService.getProductById(id);
+  const response = await productService.getProductById(id);
 
-  if (!product) notFound();
+  // เช็คก่อนใช้: ถ้าไม่สำเร็จ หรือไม่มีข้อมูล จะส่งไปหน้า 404
+  if (!response.success || !response.data) notFound();
+  
+  const product = response.data;
 
   return (
     <main className="min-h-screen bg-gradient-surface p-8 md:p-16">

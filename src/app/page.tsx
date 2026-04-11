@@ -11,7 +11,13 @@ interface HomeProps {
  */
 export default async function Home({ searchParams }: HomeProps) {
   const { q } = await searchParams;
-  const products = await productService.getAllProducts({ query: q });
+
+  // แกะกล่อง ServiceResponse
+  const response = await productService.getAllProducts({ query: q });
+
+  // เช็คก่อนใช้ (Type Guarding แบบง่าย)
+  const products = response.success && response.data ? response.data : [];
+  const errorMessage = response.success ? null : response.error;
 
   return (
     <main className="min-h-screen p-8 md:p-16 bg-gradient-surface">
@@ -19,7 +25,7 @@ export default async function Home({ searchParams }: HomeProps) {
         <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-brand bg-clip-text text-transparent italic tracking-tight uppercase">
           Marketplace
         </h1>
-        
+
         <SearchBar />
 
         <p className="text-slate-400 text-lg md:text-xl font-medium">
@@ -27,8 +33,12 @@ export default async function Home({ searchParams }: HomeProps) {
         </p>
       </header>
 
-      {/* ตรวจสอบว่ามีสินค้าไหม */}
-      {products.length > 0 ? (
+      {/* ถ้ามี Error โชว์ Error / ถ้าไม่มี โชว์ข้อมูล */}
+      {errorMessage ? (
+        <div className="text-center py-20 bg-red-500/10 rounded-3xl border border-red-500/20 max-w-2xl mx-auto">
+          <p className="text-2xl font-bold text-red-400">🚨 {errorMessage}</p>
+        </div>
+      ) : products.length > 0 ? (
         <section className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
@@ -37,7 +47,7 @@ export default async function Home({ searchParams }: HomeProps) {
       ) : (
         <div className="text-center py-20">
           <p className="text-3xl font-bold text-slate-500 italic">
-            ขออภัย ไม่พบสินค้าที่คุณค้นหา 😅
+            ขออภัย ไม่พบสินค้าที่คุณค้นหา
           </p>
         </div>
       )}
