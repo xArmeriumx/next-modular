@@ -1,47 +1,52 @@
-# Next-Modular Marketplace
+# Next.js Modular Architecture Workshop
 
-A robust, type-safe, and maintainable Next.js application built with a pragmatic modular architecture. This project serves as a showcase for professional software engineering practices in a modern web environment.
+This repository is a comprehensive hands-on workshop dedicated to mastering Next.js 16 through professional software engineering patterns. The project demonstrates how to transition from basic web development to building scalable, enterprise-grade applications using modular architecture.
 
-## Overview
+## Learning Objectives
 
-This application implements a clean separation of concerns between business logic and UI components. It leverages a centralized service layer to manage data orchestration from external APIs (DummyJSON) and internal server state.
+The primary goal of this workshop is to implement state-of-the-art web development practices without relying on complex external libraries, focusing instead on core framework capabilities and clean code principles.
 
-## Core Technologies
+## Workshop Curriculum
+
+### Phase 1: Foundation and Architecture
+- Setting up a strict TypeScript environment.
+- Implementing a Modular Project Structure to separate business logic from UI.
+- Defining Product Interfaces and Utility Objects for centralized domain logic.
+
+### Phase 2: Service Layer and Data Orchestration
+- Creating a decoupled Service Layer to manage data fetching.
+- Implementing a Hybrid Data Source: Merging real-time API data (DummyJSON) with local server-side mock state.
+- Data Mapping: Translating external API responses into internal domain models.
+
+### Phase 3: Advanced UI Components
+- Building a Modular UI System using Tailwind CSS v4.
+- Creating reusable UI Atoms (Badge, Card) with strict type safety.
+- Designing Domain-Specific Components (ProductCard, SearchBar).
+
+### Phase 4: State Management and Interactivity
+- Implementing a Global Shopping Cart using the React Context API and Custom Hooks.
+- Managing client-side state transitions with smooth UX feedback.
+- Handling stock validation and business rules within the cart logic.
+
+### Phase 5: Routing and Server Features
+- Dynamic Routing: Building high-performance product detail pages.
+- Server Actions: Handling data mutations and form submissions without API routes.
+- Stateless Search: Implementing URL-driven searching using query parameters.
+
+## Technical Stack
 
 - Framework: Next.js 16 (App Router)
-- Styling: Tailwind CSS v4
-- Language: TypeScript
-- State Management: React Context API (Cart System)
-- Data Source: DummyJSON API
+- CSS: Tailwind CSS v4
+- Database Strategy: In-memory Static Storage (Preparing for PostgreSQL)
+- Logic Pattern: Pragmatic OOP and Functional Utilities
 
-## Architecture Principles
+## How to use this project
 
-### 1. Pragmatic OOP Logic
-The application utilizes an interface-driven approach for data modeling. The business logic is encapsulated within service classes and utility objects, ensuring that domain rules are consistent and reusable across both Server and Client components.
+1. Observation: Review the src/core directory to understand the service-based architecture.
+2. Interaction: Use the Marketplace search and Cart system to observe state management.
+3. Evolution: This project is structured to easily integrate with a SQL database in the next phase.
 
-### 2. Modular UI Design
-UI components are organized into atomic units (UI Atoms) and domain-specific modules. This reduces redundancy and makes the codebase easier to scale.
+## Installation
 
-### 3. Server-First Mentality
-By default, pages and components are implemented as Server Components to minimize client-side JavaScript bundle size. Interactivity is isolated into specific Client Components only where necessary.
-
-## Features
-
-- Dynamic Product Catalog: Real-time data fetching from external API.
-- Global Shopping Cart: Persistent-like basket management using React Context.
-- Hybrid Data Layer: Integrated logic for merging remote API data with locally created server-side products.
-- URL-Driven Search: Stateless search functionality synchronized with browser query parameters.
-- Responsive Design: State-of-the-art UI with glassmorphism aesthetics.
-
-## Project Structure
-
-- src/app: Routing and page definitions.
-- src/core: Interfaces and service layer (Business Logic).
-- src/components: Reusable UI atoms and domain modules.
-- src/context: Global state management.
-
-## Installation and Setup
-
-1. Clone the repository
-2. Install dependencies: npm install
-3. Run development server: npm run dev
+1. npm install
+2. npm run dev
