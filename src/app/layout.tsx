@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
-import { Navbar } from "@/components/layout/Navbar"; // ย้ายมาวางให้เป็นระเบียบด้านบน
+import { Navbar } from "@/components/layout/Navbar";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,16 +20,21 @@ export const metadata: Metadata = {
   description: "Best practices with OOP & Modular UI",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // ดึง Session จากฝั่ง Server (Next.js 15 ต้องใช้ await cookies)
+  const cookieStore = await cookies();
+  const sessionStr = cookieStore.get("auth_session")?.value;
+  const user = sessionStr ? JSON.parse(sessionStr) : null;
+
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <CartProvider>
-          <Navbar />
+          <Navbar user={user} />
           <div className="pt-20">
             {children}
           </div>
