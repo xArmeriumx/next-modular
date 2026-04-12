@@ -1,8 +1,4 @@
-/**
- * SearchBar - แบบพื้นฐาน (Basics)
- * ใช้มาตรฐาน HTML Form GET เพื่อส่งค่าไปที่ URL
- * ไม่มีความซับซ้อนของ Timer หรือ Effect ครับ
- */
+
 export const SearchBar = () => {
   return (
     <form action="/" method="GET" className="max-w-xl mx-auto mb-12 flex gap-4">
@@ -17,9 +13,9 @@ export const SearchBar = () => {
           🔍
         </span>
       </div>
-      
-      <button 
-        type="submit" 
+
+      <button
+        type="submit"
         className="btn-primary px-10 rounded-2xl font-bold"
       >
         ค้นหา
