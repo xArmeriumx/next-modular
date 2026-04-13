@@ -47,9 +47,18 @@ export const Navbar = ({ user }: NavbarProps) => {
           <div className="border-l border-white/10 pl-6 flex items-center gap-4">
             {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-white bg-white/10 px-4 py-2 rounded-full">
-                  👤 {user.name}
-                </span>
+                <Link href="/profile" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                   <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20 bg-white/5 flex items-center justify-center text-lg">
+                    {user.image ? (
+                      <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      "👤"
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-white hidden md:block">
+                    {user.name}
+                  </span>
+                </Link>
                 <form action={logoutAction}>
                   <button type="submit" className="text-sm font-bold text-red-400 hover:text-red-300 transition-colors bg-red-500/10 px-4 py-2 rounded-full border border-red-500/20">
                     ออกจากระบบ

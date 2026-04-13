@@ -13,16 +13,16 @@ export class OrderService {
     private orderDb: IOrderDB
   ) {}
 
-  async checkout(payload: CheckoutPayload): Promise<ServiceResponse<{ orderId: string; totalPaid: number }>> {
+  async checkout(payload: CheckoutPayload, userId: string): Promise<ServiceResponse<{ orderId: string; totalPaid: number }>> {
     let totalPaid = 0;
     const orderItems: OrderItemSnapshot[] = []; // เตรียมลิสต์สินค้าที่จะถ่าย Snapshot
-    
+
     // ---------------------------------------------------------
     // Phase 1: Validation (ตรวจก่อน ห้ามหักสต็อกเลยเด็ดขาด!)
     // ---------------------------------------------------------
     for (const item of payload) {
       const product = await this.productDb.getById(item.productId);
-      
+
       if (!product) {
         return { success: false, error: `ไม่พบสินค้ารหัส ${item.productId} ในระบบ` };
       }
@@ -32,7 +32,7 @@ export class OrderService {
       }
 
       totalPaid += product.price * item.quantity;
-      
+
       // ถ่าย Snapshot เก็บไว้ในลิสต์ (จดชื่อ และราคา ณ เสี้ยววินาทีนี้ไว้)
       orderItems.push({
         productId: product.id,
@@ -57,9 +57,10 @@ export class OrderService {
     // Phase 3: สร้างบิลและบันทึกลงโกดัง (Order History)
     // ---------------------------------------------------------
     const orderId = `ORD-${Math.random().toString(36).substring(7).toUpperCase()}`;
-    
+
     const newOrder: Order = {
       id: orderId,
+      userId, // เชื่อมโยงออเดอร์กับผู้ซื้อ
       items: orderItems,
       totalAmount: totalPaid,
       createdAt: new Date()
@@ -75,11 +76,15 @@ export class OrderService {
   }
 
   /**
-   * ดึงประวัติการสั่งซื้อทั้งหมด
+   * ดึงประวัติการสั่งซื้อ
+   * @param userId ถ้าใส่มา จะดึงเฉพาะของคนนั้น ถ้าไม่ใส่จะดึงทั้งหมด (Admin)
    */
-  async getHistory(): Promise<ServiceResponse<Order[]>> {
+  async getHistory(userId?: string): Promise<ServiceResponse<Order[]>> {
     try {
-      const orders = await this.orderDb.getAll();
+      const orders = userId
+        ? await this.orderDb.findByUserId(userId)
+        : await this.orderDb.getAll();
+
       return { success: true, data: orders };
     } catch {
       return { success: false, error: "ไม่สามารถดึงประวัติการสั่งซื้อได้" };

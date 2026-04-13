@@ -13,4 +13,8 @@ export class MemoryOrderDatabase implements IOrderDB {
   async getAll(): Promise<Order[]> {
     return [...localOrders];
   }
+
+  async findByUserId(userId: string): Promise<Order[]> {
+    return localOrders.filter((order) => order.userId === userId);
+  }
 }

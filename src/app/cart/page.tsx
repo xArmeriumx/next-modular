@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useTransition, useOptimistic } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
@@ -13,26 +13,51 @@ export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCart();
   const [isPending, startTransition] = useTransition();
 
+  // 1. สร้าง Optimistic State สำหรับสถานะการสั่งซื้อ
+  // ปกติคือ 'idle' พอสั่งปั๊บบวกความหวังว่าต้อง 'success' ทันที
+  const [optimisticStatus, setOptimisticStatus] = useOptimistic(
+    "idle", 
+    (_, newStatus: string) => newStatus
+  );
+
   const handleCheckout = () => {
-    // 1. แปลงข้อมูลตะกร้าหน้าเว็บ ให้เป็น Payload แบบเกราะป้องกัน (ไม่ส่งราคาไปเลย)
     const payload = items.map(item => ({
       productId: item.product.id,
       quantity: item.quantity
     }));
 
-    // 2. เรียกใช้ Server Action 
     startTransition(async () => {
+      // 🚨 จุดสำคัญ: สั่ง "มองโลกในแง่ดี" ทันทีว่าสำเร็จแน่ๆ!
+      setOptimisticStatus("success");
+
       const response = await checkoutAction(null, payload);
       
       if (response?.success && response.data) {
-        alert(`🎉 สั่งซื้อสำเร็จเรียบร้อย!\nหมายเลขออเดอร์: ${response.data.orderId}\nขอบคุณที่ใช้บริการครับ`);
-        clearCart();
-        router.push("/");
+        // รอเสี้ยววินาทีให้คนเห็นความเนียน แล้วค่อยล้างตะกร้าจริง
+        setTimeout(() => {
+          clearCart();
+          router.push("/orders");
+        }, 800);
       } else {
         alert(`❌ พบข้อผิดพลาด:\n${response?.error}`);
+        // ถ้าพลาด React จะคืนค่า optimisticStatus เป็น 'idle' ให้เองอัตโนมัติ
       }
     });
   };
+
+  // 2. ถ้ามองโลกในแง่ดีว่าสำเร็จแล้ว ให้โชว์หน้า Success ทันทีไม่ต้องรอ Server!
+  if (optimisticStatus === "success") {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-surface text-center p-8">
+        <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center text-5xl mb-8 animate-bounce shadow-2xl shadow-primary/50">
+          🎉
+        </div>
+        <h1 className="text-5xl font-black text-white italic uppercase mb-4 italic">Thank You!</h1>
+        <p className="text-2xl text-slate-400 font-medium">คำสั่งซื้อของคุณถูกส่งเข้าระบบแล้ว</p>
+        <p className="text-slate-500 mt-4 animate-pulse">กำลังพาคุณไปหน้าประวัติการสั่งซื้อ...</p>
+      </main>
+    );
+  }
 
   if (items.length === 0) {
     return (
