@@ -5,6 +5,7 @@ export interface User {
   email: string;
   name: string;
   role: UserRole;
+  image?: string; // รูปโปรไฟล์ (Base64 หรือ URL)
 }
 
 export interface UserDocument extends User {

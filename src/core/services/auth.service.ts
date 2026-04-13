@@ -40,5 +40,29 @@ export const authService = {
       console.error("[AuthService] Login Error:", error);
       return { success: false, error: "ระบบยืนยันตัวตนขัดข้องชั่วคราว" };
     }
+  },
+
+  /**
+   * อัปเดตข้อมูลส่วนตัว (Name, Avatar)
+   */
+  async updateProfile(userId: string, data: { name?: string; image?: string }): Promise<ServiceResponse<User>> {
+    try {
+      const updatedUser = await db.update(userId, data);
+      
+      if (!updatedUser) {
+        return { success: false, error: "ไม่พบผู้ใช้ที่ต้องการอัปเดต" };
+      }
+
+      // ปัดกวาดข้อมูลหลังบ้านทิ้งก่อนส่งคืน
+      const { hashedPassword, createdAt, ...safeUser } = updatedUser;
+
+      return {
+        success: true,
+        data: safeUser
+      };
+    } catch (error: any) {
+      console.error("[AuthService] UpdateProfile Error:", error);
+      return { success: false, error: "ไม่สามารถอัปเดตข้อมูลได้ในวันนี้" };
+    }
   }
 };
